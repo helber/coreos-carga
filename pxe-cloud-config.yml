@@ -1,0 +1,48 @@
+#cloud-config
+ssh-authorized-keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCp53V1DNyj7H5gqPvvHJ5S3Fr6t6Llw+p17VCde8YUHzaVkqQUTSM3hef2XhTjbmqMvGWvw0IP0D9B3OMoKhABfHA0yYBd0ObXhCJJkhuS3VFLb55/WRaxIbJnLmWjVOvgDRS1RgHH5HXPWCn+5dkFr3KA6uv2tlmyNCAwKHBJx5y2Rn6Rj0Q2T7VR21l5Hfn3AztlFJb6xHy1fn5quJMObTyhVGe9HNl22HIJpRaRrycLtQ3j7nHL3JQEEoNXmltY3tCi9MnZIH/i9gZMtIbMNUloWI6TaahmdwQH0Ep5TgcprRCmDsyzIvvs0hyz7IUz1U7PhbUCEsLCLqubPtqF helber.guerra@gmail.com
+users:
+  - name: helber
+    passwd: $1$wCH/vSmc$ARVCrXmeBmzucLrpZlCF0/
+    coreos-ssh-import-github: helber
+    groups:
+      - sudo
+      - docker
+  - name: root
+    passwd: $1$wCH/vSmc$ARVCrXmeBmzucLrpZlCF0/
+  - name: core
+    passwd: $1$wCH/vSmc$ARVCrXmeBmzucLrpZlCF0/
+coreos:
+  fleet:
+    etcd_servers: "http://10.0.0.9:4001"
+  units:
+    - name: fleet.service
+      command: start
+    - name: mnt-backupHelber.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Mounts fileserver
+        Wants=network.target
+        After=network.target
+        After=remote-fs.target
+        [Mount]
+        Where=/mnt/backupHelber
+        What=10.0.0.10:/mnt/backupHelber
+        Type=nfs
+        [Install]
+        WantedBy=multi-user.target
+write_files:
+  - path: /etc/profile.d/etcdctl.sh
+    permissions: 0644
+    owner: core
+    content: |
+      # configure etcdctl to work with our etcd servers set above
+      export ETCDCTL_PEERS="http://10.0.0.9:4001"
+  - path: /etc/profile.d/fleetctl.sh
+    permissions: 0644
+    owner: core
+    content: |
+      # configure fleetctl to work with our etcd servers set above
+      export FLEETCTL_ENDPOINT="http://10.0.0.9:4001"
+      export FLEETCTL_EXPERIMENTAL_API=true
