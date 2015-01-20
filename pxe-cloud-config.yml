@@ -14,6 +14,7 @@ users:
     passwd: $1$wCH/vSmc$ARVCrXmeBmzucLrpZlCF0/
 coreos:
   fleet:
+    # Servidor etcd
     etcd_servers: "http://10.0.0.9:4001"
   units:
     - name: fleet.service
@@ -32,6 +33,21 @@ coreos:
         Type=nfs
         [Install]
         WantedBy=multi-user.target
+    - name: var-lib-docker.mount
+      command: start
+      content: |
+        [Unit]
+        Description=Mounts Docker %m
+        Wants=network.target
+        After=network.target
+        After=remote-fs.target
+        Before=docker.service
+        [Mount]
+        Where=/var/lib/docker
+        What=10.0.0.10:/mnt/backupHelber/dockershare/e9925f04baed4531917bef191892e2a1/
+        Type=nfs
+        [Install]
+        WantedBy=multi-user.target
 write_files:
   - path: /etc/profile.d/etcdctl.sh
     permissions: 0644
@@ -44,5 +60,5 @@ write_files:
     owner: core
     content: |
       # configure fleetctl to work with our etcd servers set above
-      export FLEETCTL_ENDPOINT="http://10.0.0.9:4001"
+      export FLEETCTL_ENDPOINT=/var/run/fleet.sock
       export FLEETCTL_EXPERIMENTAL_API=true
