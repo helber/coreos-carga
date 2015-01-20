@@ -8,9 +8,11 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill selenium-hub
 ExecStartPre=-/usr/bin/docker rm selenium-hub
 ExecStartPre=/usr/bin/docker pull selenium/hub:2.44.0
-ExecStart=/usr/bin/docker run -rm --name selenium-hub -p 4444:4444 selenium/hub:2.44.0
+ExecStart=/usr/bin/docker run --rm --name selenium-hub -p 4444:4444 selenium/hub:2.44.0
 ExecStop=/usr/bin/docker stop selenium-hub
+
+[Install]
+WantedBy=multi-user.target
 
 [X-Fleet]
 Conflicts=selenium-hub
-
