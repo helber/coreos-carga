@@ -10,13 +10,13 @@ users:
       - docker
   - name: root
     passwd: $1$wCH/vSmc$ARVCrXmeBmzucLrpZlCF0/
-  - name: core
-    passwd: $1$wCH/vSmc$ARVCrXmeBmzucLrpZlCF0/
 coreos:
   fleet:
     # Servidor etcd
     etcd_servers: "http://10.0.0.9:4001"
   units:
+    - name: etcd.service
+      mask: true
     - name: fleet.service
       command: start
     - name: mnt-backupHelber.mount
@@ -40,12 +40,24 @@ coreos:
         Description=Mounts Docker %m
         Wants=network.target
         After=network.target
-        After=remote-fs.target
         Before=docker.service
         [Mount]
         Where=/var/lib/docker
-        What=10.0.0.10:/mnt/backupHelber/dockershare/e9925f04baed4531917bef191892e2a1/
-        Type=nfs
+        What=LABEL=DOCKER
+        Type=btrfs
+        [Install]
+        WantedBy=multi-user.target
+    - name: dev-disk-by\x2dlabel-SWP.swap
+      command: start
+      content: |
+        [Unit]
+        Description=Mounts SWAP %m
+        Wants=network.target
+        After=network.target
+        Before=docker.service
+        [Mount]
+        What=LABEL=SWP
+        Type=swap
         [Install]
         WantedBy=multi-user.target
 write_files:
@@ -60,5 +72,5 @@ write_files:
     owner: core
     content: |
       # configure fleetctl to work with our etcd servers set above
-      export FLEETCTL_ENDPOINT=/var/run/fleet.sock
+      export FLEETCTL_ENDPOINT=file:///var/run/fleet.sock
       export FLEETCTL_EXPERIMENTAL_API=true
