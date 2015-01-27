@@ -1,0 +1,8 @@
+[Unit]
+Description=Hello World %i
+
+[Service]
+ExecStart=/bin/bash -c "while true; do echo \"Hello, world %i %m\"; sleep 1; done"
+
+[Install]
+WantedBy=multi-user.target
