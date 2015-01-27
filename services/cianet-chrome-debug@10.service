@@ -1,0 +1,23 @@
+[Unit]
+Description=Cianet Chrome %i
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill cianet-chrome-test-%i
+ExecStartPre=-/usr/bin/docker rm cianet-chrome-test-%i
+ExecStartPre=/usr/bin/docker pull helber/google-chrome-test
+ExecStart=/usr/bin/docker run -p 5900 --rm --privileged \
+ -e IPTV_PROTO=http \
+ -e IPTV_DISABLE_CACHE=false \
+ -e IPTV_SERIAL=FAKE_00000000000000000010 \
+ -e IPTV_MAC=00:00:00:00:00:0A \
+ -e IPTV_HOST=middleware.iptvdomain \
+ -e IPTV_PATH=debug/?profile_test=guide_programmes#repg \
+ --name cianet-chrome-test-%i helber/google-chrome-test
+ExecStop=/usr/bin/docker stop cianet-chrome-test-%i
+
+[Install]
+WantedBy=multi-user.target
+
