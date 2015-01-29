@@ -1,0 +1,5 @@
+# Fleet (Docker)
+export FLEETCTL_ENDPOINT=http://10.5.10.11:4001
+export FLEETCTL_TUNNEL=10.5.10.11:22
+
+
