@@ -52,7 +52,9 @@ ENV IPTV_DISABLE_CACHE=false
 
 COPY entry_point.sh /opt/bin/entry_point.sh
 COPY start_rx.sh /opt/bin/start_rx.sh
+COPY stop_rx.sh /opt/bin/stop_rx.sh
 RUN chmod +x /opt/bin/entry_point.sh
 RUN chmod +x /opt/bin/start_rx.sh
+RUN chmod +x /opt/bin/stop_rx.sh
 
 EXPOSE 5900
