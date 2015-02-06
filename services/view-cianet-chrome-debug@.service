@@ -4,11 +4,11 @@ BindsTo=cianet-chrome-debug@%i.service
 Requires=cianet-chrome-debug@%i.service
 
 [Service]
-Environment=ETCDCTL_PEERS="http://10.5.10.11:7001"
+EnvironmentFile=/etc/environment
 ExecStartPre=-/usr/bin/docker exec -d cianet-chrome-test-%i /opt/bin/start_rx.sh
-ExecStartPre=-/bin/bash -c "HOST_IP=$(/bin/ifconfig eth0 | awk '/inet /{print $2}') && DPORT=$(/usr/bin/docker port cianet-chrome-test-%i 5900 | cut -d':' -f2) && echo view-%i-$HOST_IP:$DPORT"
-ExecStart=/bin/bash -c "while true; do HOST_IP=$(/bin/ifconfig eth0 | awk '/inet /{print $2}') && DPORT=$(/usr/bin/docker port cianet-chrome-test-%i 5900 | cut -d':' -f2) && /usr/bin/etcdctl set /cianet/client/view-%i $HOST_IP:$DPORT;sleep 45;done"
-ExecStop=/usr/bin/etcdctl delete /cianet/client/browser%i
+ExecStartPre=-/bin/bash -c "source /etc/environment; IF=$(ifconfig | grep RUNNING| egrep -i '^(en|eth)'| cut -d':' -f1| tail -n1) && HOST_IP=$(/bin/ifconfig $IF | awk '/inet /{print $2}') && DPORT=$(/usr/bin/docker port cianet-chrome-test-%i 5900 | cut -d':' -f2) && echo view-%i-$HOST_IP:$DPORT"
+ExecStart=/bin/bash -c "source /etc/environment; while true; do IF=$(ifconfig | grep RUNNING| egrep -i '^(en|eth)'| cut -d':' -f1| tail -n1) && HOST_IP=$(/bin/ifconfig $IF | awk '/inet /{print $2}') && DPORT=$(/usr/bin/docker port cianet-chrome-test-%i 5900 | cut -d':' -f2) && /usr/bin/etcdctl set /cianet/client/view-cianet-chrome-test-%i $HOST_IP:$DPORT;sleep 45;done"
+ExecStop=/bin/bash -c "source /etc/environment; /usr/bin/etcdctl rm /cianet/client/view-cianet-chrome-test-%i"
 ExecStopPost=-/usr/bin/docker exec cianet-chrome-test-%i /opt/bin/stop_rx.sh
 
 [X-Fleet]

@@ -1,0 +1,15 @@
+[Unit]
+Description=Debug Cianet Webkit %i
+BindsTo=cianet-webkit-debug@%i.service
+Requires=cianet-webkit-debug@%i.service
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStartPre=-/usr/bin/docker exec -d cianet-webkit-test-%i /opt/bin/start_rx.sh
+ExecStartPre=-/bin/bash -c "source /etc/environment; IF=$(ifconfig | grep RUNNING| egrep -i '^(en|eth)'| cut -d':' -f1| tail -n1) && HOST_IP=$(/bin/ifconfig $IF | awk '/inet /{print $2}') && DPORT=$(/usr/bin/docker port cianet-webkit-test-%i 5900 | cut -d':' -f2) && echo view-%i-$HOST_IP:$DPORT"
+ExecStart=/bin/bash -c "source /etc/environment; while true; do IF=$(ifconfig | grep RUNNING| egrep -i '^(en|eth)'| cut -d':' -f1| tail -n1) && HOST_IP=$(/bin/ifconfig $IF | awk '/inet /{print $2}') && DPORT=$(/usr/bin/docker port cianet-webkit-test-%i 5900 | cut -d':' -f2) && /usr/bin/etcdctl set /cianet/client/view-cianet-webkit-test-%i $HOST_IP:$DPORT;sleep 45;done"
+ExecStop=/bin/bash -c "source /etc/environment; /usr/bin/etcdctl rm /cianet/client/view-cianet-webkit-test-%i"
+ExecStopPost=-/usr/bin/docker exec cianet-webkit-test-%i /opt/bin/stop_rx.sh
+
+[X-Fleet]
+MachineOf=cianet-webkit-debug@%i.service
