@@ -1,0 +1,22 @@
+[Unit]
+Description=Cianet webkit %i
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill cianet-webkit-test-%i
+ExecStartPre=-/usr/bin/docker rm cianet-webkit-test-%i
+ExecStartPre=/usr/bin/docker pull helber/cianet-webkitgtk3
+ExecStart=/usr/bin/docker run -p 5900 --rm --privileged \
+ -e IPTV_PROTO=http \
+ -e IPTV_DISABLE_CACHE=false \
+ -e IPTV_SERIAL=FAKE_00000000000000000010 \
+ -e IPTV_MAC=00:00:00:00:00:0A \
+ -e IPTV_HOST=middleware.iptvdomain \
+ -e IPTV_PATH=debug/?profile_test=guide_programmes#repg \
+ --name cianet-webkit-test-%i helber/cianet-webkitgtk3
+ExecStop=/usr/bin/docker stop cianet-webkit-test-%i
+
+[Install]
+WantedBy=multi-user.target
