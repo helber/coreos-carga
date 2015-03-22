@@ -10,11 +10,12 @@ ExecStartPre=-/usr/bin/docker kill selenium-chrome-debug-%i
 ExecStartPre=-/usr/bin/docker rm selenium-chrome-debug-%i
 ExecStartPre=/usr/bin/docker pull selenium/node-chrome-debug:2.44.0
 # $HUB_PORT_4444_TCP_ADDR:$HUB_PORT_4444_TCP_PORT  --link selenium-hub:hub $(/usr/bin/etcdctl get /cianet/HUB_IP)
-ExecStart=/bin/bash -c "source /etc/environment; /usr/bin/docker run --rm -e HUB_PORT_4444_TCP_ADDR=$(/usr/bin/etcdctl get /cianet/HUB_IP) -e HUB_PORT_4444_TCP_PORT=4444 --name selenium-chrome-debug-%i selenium/node-chrome-debug:2.44.0"
+# ExecStart=/bin/bash -c "source /etc/environment; /usr/bin/docker run --rm -e HUB_PORT_4444_TCP_ADDR=$(/usr/bin/etcdctl get /cianet/HUB_IP) -e HUB_PORT_4444_TCP_PORT=4444 --name selenium-chrome-debug-%i selenium/node-chrome-debug:2.44.0"
+ExecStart=/bin/bash -c "source /etc/environment; /usr/bin/docker run --rm --link selenium-hub:hub -e HUB_PORT_4444_TCP_PORT=4444 --name selenium-chrome-debug-%i selenium/node-chrome-debug:2.44.0"
 ExecStop=/usr/bin/docker stop selenium-chrome-debug-%i
 
 [Install]
 WantedBy=multi-user.target
 
-#[X-Fleet]
-#X-ConditionMachineOf=selenium-hub.service
+[X-Fleet]
+X-ConditionMachineOf=selenium-hub.service
