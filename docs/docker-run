@@ -1,0 +1,33 @@
+Alvo:
+http://middleware.iptvdomain/debug/?profile_test=guide_programmes#repg/2
+
+
+https://github.com/SeleniumHQ/docker-selenium/tree/master/NodeChromeDebug
+
+/usr/bin/xvfb-run --server-args=":99.0 -screen 0 1280x800x24 -ac +extension RANDR" \
+/opt/google/chrome/chrome --user-agent="serial=Eder;mac=FF:00:00:00:00:97;" "http://10.0.0.20/debug/?profile_test=guide_programmes#repg" &
+
+fluxbox -display $DISPLAY &
+
+x11vnc -forever -usepw -shared -rfbport 5900 -display $DISPLAY &
+
+
+
+/usr/bin/docker run -p 5900 --rm --privileged \
+ -e IPTV_PROTO=http \
+ -e IPTV_DISABLE_CACHE=false \
+ -e IPTV_SERIAL=FAKE_00000000000000000010 \
+ -e IPTV_MAC=00:00:00:00:00:0A \
+ -e IPTV_HOST=middleware.iptvdomain \
+ -e IPTV_PATH=debug/?profile_test=guide_programmes#repg \
+ --name cianet-chrome-test-10 helber/google-chrome-test
+
+
+/usr/bin/docker run -p 5900 --rm --privileged \
+ -e IPTV_PROTO=http \
+ -e IPTV_DISABLE_CACHE=false \
+ -e IPTV_SERIAL=FAKE_00000000000000000010 \
+ -e IPTV_MAC=00:00:00:00:00:0A \
+ -e IPTV_HOST=middleware.iptvdomain \
+ -e IPTV_PATH=debug/?profile_test=guide_programmes#repg \
+ --name cianet-chrome-test-10 helber/cianet-webkitgtk3
