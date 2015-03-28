@@ -1,0 +1,40 @@
+#cloud-config
+
+hostname: coreos-etcd-fleet
+ssh-authorized-keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCp53V1DNyj7H5gqPvvHJ5S3Fr6t6Llw+p17VCde8YUHzaVkqQUTSM3hef2XhTjbmqMvGWvw0IP0D9B3OMoKhABfHA0yYBd0ObXhCJJkhuS3VFLb55/WRaxIbJnLmWjVOvgDRS1RgHH5HXPWCn+5dkFr3KA6uv2tlmyNCAwKHBJx5y2Rn6Rj0Q2T7VR21l5Hfn3AztlFJb6xHy1fn5quJMObTyhVGe9HNl22HIJpRaRrycLtQ3j7nHL3JQEEoNXmltY3tCi9MnZIH/i9gZMtIbMNUloWI6TaahmdwQH0Ep5TgcprRCmDsyzIvvs0hyz7IUz1U7PhbUCEsLCLqubPtqF helber.guerra@gmail.com
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDOSiopvwgmfvpK9LvgKl66c5V7VVvCfMMs9pMQ05jy858ekChBYjx0zioebgusbJUX4rwEg7hc4TWAbLWUgkL9oHxENxT9NPFAkLPLauXkybCT5wzp2ryLJogZh/V30GKlAXR+IDtws6cP51DP9e+SLCtkQeMwXg/TTV45WL++hQAGICzl6eWpYL1DSKNewJPxrRFqUVBcy0jUcYpiizid1Y8wBKWY+kMeiw+CNzRcIdk8aET8RyL40K0Xb15bZY6oTuWBpcfI9en1qzXKCusOQEWroibQz/ow9xQ9v7JH2U6TfKQCf52MemF37KCDAL3+DUBlYgV0L2pZ6BTisP/j helber@cluster-boot.iptvdomain
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHH2efeSIc2myKA/9bg67/p+bPX03U8NXA4Wx7L3W8jTk/bWJZZicaSTjFpaxKz1dYNb+9j+sopFAfaUgn0f1s2BLHfD0bNWZUxtS48Rl18LNftiwRduKybDiRdH98m5QYmAjtTUAOLH4z0brHELeIjVi3FdithfFV3T+ycutEEEuVocIef2p6v//6Cw4rG+TKavDVluIEgDY+jrlxX/N0kxwituizdj/IYgodq/tKVFvEhN8AAX8/N08WLyJMl0F4agMfJWg2uaCvR0ZXr9Hyr1EC6ooe57FpwwPRyrP1uAHUGoN05XxnFW7pLZBYM+epuDHGr8DGF6lmxjeDDzK5 emanoel@localhost.localdomain
+users:
+  - name: helber
+    passwd: $1$wCH/vSmc$ARVCrXmeBmzucLrpZlCF0/
+    ssh-authorized-keys: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCp53V1DNyj7H5gqPvvHJ5S3Fr6t6Llw+p17VCde8YUHzaVkqQUTSM3hef2XhTjbmqMvGWvw0IP0D9B3OMoKhABfHA0yYBd0ObXhCJJkhuS3VFLb55/WRaxIbJnLmWjVOvgDRS1RgHH5HXPWCn+5dkFr3KA6uv2tlmyNCAwKHBJx5y2Rn6Rj0Q2T7VR21l5Hfn3AztlFJb6xHy1fn5quJMObTyhVGe9HNl22HIJpRaRrycLtQ3j7nHL3JQEEoNXmltY3tCi9MnZIH/i9gZMtIbMNUloWI6TaahmdwQH0Ep5TgcprRCmDsyzIvvs0hyz7IUz1U7PhbUCEsLCLqubPtqF helber.guerra@gmail.com
+    groups:
+      - sudo
+      - docker
+  - name: root
+    passwd: $1$E0bWAH0G$yyeYMrwFVXRGX1qkmcJ7S.
+coreos:
+  etcd:
+    name: 10.5.10.11
+    # discovery: https://discovery.etcd.io/8aee4e79c7460cb59b4badc3bc38e09d
+    addr: 10.5.10.11:4001
+    bind-addr: 0.0.0.0
+    peer-addr: 10.5.10.11:7001
+    cluster-active-size: 1
+    snapshot: true
+  units:
+    - name: etcd.service
+      command: start
+    - name: 00-eth0.network
+      command: restart
+      runtime: true
+      content: |
+        [Match]
+        Name=eth0
+        [Network]
+        DHCP=true
+        #Address=10.5.10.11/16
+        #Gateway=10.5.0.1
+        #DNS=10.5.0.1
+
