@@ -1,4 +1,4 @@
-FROM selenium/node-chrome:2.44.0
+FROM selenium/node-chrome:2.45.0
 MAINTAINER Helber Maciel Guerra <helber@cianet.ind.br>
 
 USER root
