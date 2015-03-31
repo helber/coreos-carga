@@ -14,7 +14,7 @@ ExecStart=/usr/bin/docker run -p 5900 --rm --privileged \
  -e IPTV_SERIAL=FAKE_00000000000000000010 \
  -e IPTV_MAC=00:00:00:00:00:0A \
  -e IPTV_HOST=middleware.iptvdomain \
- -e IPTV_PATH=debug/?profile_test=guide_programmes#repg \
+ -e IPTV_PATH=epg/?profile_test=guide_programmes \
  --name cianet-webkit-test-%i helber/cianet-webkitgtk3
 ExecStop=/usr/bin/docker stop cianet-webkit-test-%i
 
