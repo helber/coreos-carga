@@ -17,3 +17,6 @@ mkfs.btrfs -L DOCKER /dev/mapper/COREOS-docker
 systemctl start  /var/lib/docker/
 systemctl start  /var/lib/toolbox/
 
+# SWAP
+# lvcreate -n SWP COREOS -L 12G
+# mkswap /dev/mapper/COREOS-SWP
