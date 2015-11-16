@@ -73,23 +73,6 @@ coreos:
         Type=swap
         [Install]
         WantedBy=multi-user.target
-    - name: 01-mybr0.netdev
-      runtime: true
-      content: |
-        [NetDev]
-        Name=br0
-        Kind=bridge
-    - name: 01-mybr0.network
-      runtime: true
-      content: |
-        [Match]
-        Name=br0
-        [Network]
-        DHCP=no
-        IPForward=yes
-        DNS=10.5.0.1
-        Address=10.6.2.2/23
-        Gateway=10.6.2.1
     - name: 00-myeths.network
       runtime: true
       content: |
@@ -115,6 +98,23 @@ coreos:
         ExecStart=-/usr/bin/ip addr flush dev eno1
       #    - name: systemd-networkd.service
       #      command: restart
+    - name: 01-mybr0.netdev
+      runtime: true
+      content: |
+        [NetDev]
+        Name=br0
+        Kind=bridge
+    - name: 01-mybr0.network
+      runtime: true
+      content: |
+        [Match]
+        Name=br0
+        [Network]
+        DHCP=no
+        IPForward=yes
+        DNS=10.5.0.11
+        Address=10.6.4.1/23
+        Gateway=10.6.5.254
     - name: docker.service
       command: start
       drop-ins:
@@ -122,7 +122,7 @@ coreos:
           content: |
             [Service]
             # Environment='DOCKER_OPTS=-b br0 --ip-masq=false --iptables=false --dns="10.6.0.1" --default-gateway="10.6.0.1" --ip-masq=false --fixed-cidr="10.6.0.0/23"'
-            Environment='DOCKER_OPTS= -b br0 --ip-masq=false --iptables=false '
+            Environment='DOCKER_OPTS= -b br0 --ip-masq=false --iptables=false --dns="10.5.0.11" --default-gateway="10.6.5.254"'
 write_files:
   - path: /etc/environment
     permissions: 0644

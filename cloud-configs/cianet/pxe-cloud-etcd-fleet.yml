@@ -15,16 +15,22 @@ users:
   - name: root
     passwd: $1$E0bWAH0G$yyeYMrwFVXRGX1qkmcJ7S.
 coreos:
-  etcd:
-    name: 10.5.10.11
-    # discovery: https://discovery.etcd.io/8aee4e79c7460cb59b4badc3bc38e09d
-    addr: 10.5.10.11:4001
-    bind-addr: 0.0.0.0
-    peer-addr: 10.5.10.11:7001
-    cluster-active-size: 1
-    snapshot: true
+  etcd2:
+    discovery: "https://discovery.etcd.io/c0c4d1a3ddcfd98df1ad3846d16e9e6a"
+    advertise-client-urls: "http://10.5.10.11:2379"
+    initial-advertise-peer-urls: "http://10.6.0.11:2380"
+    listen-client-urls: "http://0.0.0.0:2379,http://0.0.0.0:4001"
+    listen-peer-urls: "http://10.6.0.11:2380,http://10.6.0.11:7001"
+  # etcd:
+  #   name: 10.6.0.11
+  #   # discovery: https://discovery.etcd.io/8aee4e79c7460cb59b4badc3bc38e09d
+  #   addr: 10.6.0.11:4001
+  #   bind-addr: 0.0.0.0
+  #   peer-addr: 10.6.0.11:7001
+  #   cluster-active-size: 1
+  #   snapshot: true
   units:
-    - name: etcd.service
+    - name: etcd2.service
       command: start
     - name: 00-eth0.network
       command: restart
@@ -33,8 +39,7 @@ coreos:
         [Match]
         Name=eth0
         [Network]
-        DHCP=true
-        #Address=10.5.10.11/16
-        #Gateway=10.5.0.1
-        #DNS=10.5.0.1
+        DHCP=false
+        Address=10.6.0.11/23
+        DNS=10.5.0.11
 
