@@ -4,13 +4,13 @@ function shutdown {
     kill -s SIGTERM $NODE_PID
     wait $NODE_PID
 }
-
+sleep 2
 sudo -E -i -u seluser \
     DISPLAY=$DISPLAY \
     xvfb-run --server-args="$DISPLAY -screen 0 $GEOMETRY -ac +extension RANDR" \
-    /usr/lib/x86_64-linux-gnu/webkit2gtk-3.0/libexec/MiniBrowser --enable-fullscreen=true \
+    /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/MiniBrowser --enable-fullscreen=true \
     $IPTV_ARGS \
-    --user-agent="serial=$IPTV_SERIAL;mac=$IPTV_MAC;" "http://$IPTV_HOST/$IPTV_PATH" &
+    --user-agent="serial=$IPTV_SERIAL;mac=$IPTV_MAC;" "http://${IPTV_HOST}${IPTV_PATH}" &
 NODE_PID=$!
 
 trap shutdown SIGTERM SIGINT
