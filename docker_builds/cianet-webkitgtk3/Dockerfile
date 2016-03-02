@@ -55,7 +55,7 @@ RUN apt-get update -qqy \
 RUN useradd seluser --shell /bin/bash --create-home \
   && usermod -a -G sudo seluser \
   && echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers \
-  && echo 'seluser:secret' | chpasswd
+  && echo 'seluser:123' | chpasswd
 
 COPY entry_point.sh /opt/bin/entry_point.sh
 COPY start_rx.sh /opt/bin/start_rx.sh

@@ -1,1 +1,1 @@
-docker build -t helber/cianet-webkitgtk3 .
+docker build --rm=true -t helber/cianet-webkitgtk3 .
