@@ -66,4 +66,5 @@ RUN apt-get update -qqy \
   && apt-get -qqy install xvfb \
   && rm -rf /var/lib/apt/lists/*
 
+CMD ["/opt/bin/entry_point.sh"]
 EXPOSE 5900
