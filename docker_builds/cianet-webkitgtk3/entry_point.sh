@@ -4,7 +4,11 @@ function shutdown {
     kill -s SIGTERM $NODE_PID
     wait $NODE_PID
 }
-sleep 2
+let "DELAY += 1"
+let "DELAY -= 1"
+if [[ ${DELAY-0} != 0 ]];then
+    sleep ${DELAY}
+fi
 sudo -E -i -u seluser \
     DISPLAY=$DISPLAY \
     xvfb-run --server-args="$DISPLAY -screen 0 $GEOMETRY -ac +extension RANDR" \

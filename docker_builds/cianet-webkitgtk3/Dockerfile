@@ -37,8 +37,11 @@ RUN apt-get update -qqy \
 # libwebkit2gtk-3.0-25 | libwebkit2gtk-4.0-37
 # fluxbox & libwebkit2gtk
 RUN apt-get update -qqy \
-  && apt-get -qqy install fluxbox \
-  && apt-get -qqy install libwebkit2gtk-4.0-37 \
+  && apt-get -qqy --no-install-recommends install \
+  fluxbox \
+  libwebkit2gtk-4.0-37 \
+  sudo \
+  xvfb \
   && rm -rf /var/lib/apt/lists/*
 
 # IPTV ENV
@@ -47,10 +50,6 @@ ENV IPTV_MAC="FF:FF:FF:00:00:00"
 ENV IPTV_HOST="middleware.iptvdomain"
 ENV IPTV_PATH="debug/?profile_test=guide_programmes#repg"
 ENV IPTV_DISABLE_CACHE=false
-
-RUN apt-get update -qqy \
-  && apt-get -qqy install sudo \
-  && rm -rf /var/lib/apt/lists/*
 
 RUN useradd seluser --shell /bin/bash --create-home \
   && usermod -a -G sudo seluser \
@@ -61,10 +60,6 @@ COPY entry_point.sh /opt/bin/entry_point.sh
 COPY start_rx.sh /opt/bin/start_rx.sh
 COPY stop_rx.sh /opt/bin/stop_rx.sh
 RUN chmod +x /opt/bin/entry_point.sh /opt/bin/start_rx.sh /opt/bin/stop_rx.sh
-
-RUN apt-get update -qqy \
-  && apt-get -qqy install xvfb \
-  && rm -rf /var/lib/apt/lists/*
 
 CMD ["/opt/bin/entry_point.sh"]
 EXPOSE 5900
